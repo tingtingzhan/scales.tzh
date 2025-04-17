@@ -4,14 +4,14 @@
 \alias{label_}
 \alias{label_permille}
 \alias{label_per10thousand}
-\title{Additional \verb{label_*} Functions}
+\title{Additional Labelling \verb{label_*} Functions}
 \usage{
 label_permille(scale = 1000, suffix = "‰", ...)
 
 label_per10thousand(scale = 10000, suffix = "‱", ...)
 }
 \arguments{
-\item{scale, suffix, ...}{see function \link[scales]{number_format}}
+\item{scale, suffix, ...}{see function \link[scales]{label_number}}
 }
 \description{
 ..
@@ -19,8 +19,13 @@ label_per10thousand(scale = 10000, suffix = "‱", ...)
 \details{
 To mimic the behavior of function \link[scales]{label_percent}.
 }
+\note{
+tzh does not think there is a parameter of function \link[scales]{label_number}
+to specify the coding of \code{NA_real_}.
+}
 \examples{
-label_permille(accuracy = .1)(3.6e-3)
+3.6e-3 |> label_permille(accuracy = .1)()
+c(3.6e-3, NA_real_) |> label_permille(accuracy = .1)()
 label_per10thousand(accuracy = .1)(4.2e-4)
 }
 \keyword{internal}

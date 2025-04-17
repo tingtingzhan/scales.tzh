@@ -2,4 +2,4 @@
 
 export(label_per10thousand)
 export(label_permille)
-importFrom(scales,number_format)
+importFrom(scales,label_number)
