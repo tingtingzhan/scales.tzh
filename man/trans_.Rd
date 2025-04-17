@@ -6,7 +6,7 @@
 \alias{transform_quantit}
 \alias{transform_expit}
 \alias{transform_cloglog}
-\title{More \link{scales}\link{trans}}
+\title{More \link[scales]{trans}formation Functions}
 \usage{
 transform_quantile(distribution, ...)
 
@@ -34,9 +34,6 @@ Function \code{\link[=transform_quantit]{transform_quantit()}} transforms standa
 reverts the transformation \link[scales]{transform_probit}.
 
 Function \code{\link[=transform_cloglog]{transform_cloglog()}} transforms proportions to complementary-log-log,
-}
-\note{
-\link[scales]{date_trans} is only compatible with \link[base]{Date}.
 }
 \examples{
 x = seq.int(from = .1, to = .9, by = .1)

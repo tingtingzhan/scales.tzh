@@ -1,7 +1,6 @@
 
-# many functions here needs re-think..
 
-#' @title More \link{scales}[trans]
+#' @title More \link[scales]{trans}formation Functions
 #' 
 #' @description ..
 #' 
@@ -24,9 +23,6 @@
 #' 
 # Function [transform_loglog()] transforms proportions to log-log.
 #' 
-#' @note
-#' \link[scales]{date_trans} is only compatible with \link[base]{Date}.
-#' 
 #' @examples 
 #' x = seq.int(from = .1, to = .9, by = .1)
 #' library(ggplot2)
@@ -48,22 +44,6 @@
 #' @name trans_
 #' @importFrom scales new_transform
 NULL
-
-if (FALSE) {
-  identical(scales::trans_new, scales::new_transform) |> stopifnot()
-  # but [new_transform()] is used in function definitions in \pkg{scales}
-  
-  identical(scales::as.trans, scales::as.transform) |> stopifnot()
-  
-  identical(scales::log_trans, scales::transform_log) |> stopifnot()
-  # ?scales::as.transform (e.g., inside ?ggplot2::coord_trans)
-  # does `paste0('transform_', x)`  
-  identical(scales::exp_trans, scales::transform_exp) |> stopifnot()
-  
-  identical(scales::transform_probability, scales::probability_trans) |> stopifnot()
-  identical(scales::transform_logit, scales::logit_trans) |> stopifnot()
-}
-
 
 # any model return 'loge' or 'ln' as link, should be turned to 'log' manually
 

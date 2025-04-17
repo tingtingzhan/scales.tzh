@@ -38,11 +38,3 @@ label_per10thousand <- function(scale = 1e4, suffix = '\u2031', ...) {
 
 
 
-if (FALSE) {
-  # Functions \link[scales]{percent} and \link[scales]{percent_format} are superseded by \link[scales]{label_percent}.
-  identical(scales::percent_format, scales::label_percent) |> stopifnot()
-  
-  # \link[scales]{number_format} is superseded by \link[scales]{label_number}.
-  # even though \link[scales]{label_percent} has [number_format()] inside!!!
-  identical(scales::number_format, scales::label_number) |> stopifnot()
-}
