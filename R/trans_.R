@@ -119,7 +119,7 @@ link2transform <- function(link, domain) {
       1 / link$mu.eta(link$linkfun(x))
     },
     d_inverse = link$mu.eta,
-    domain = domain # currently need human input of domain
+    domain = domain # currently requires human input!!!
   )
   
 }
