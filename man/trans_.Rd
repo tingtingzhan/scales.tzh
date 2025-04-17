@@ -2,25 +2,22 @@
 % Please edit documentation in R/trans_.R
 \name{trans_}
 \alias{trans_}
-\alias{quantile_trans}
-\alias{quantit_trans}
-\alias{expit_trans}
-\alias{cloglog_trans}
-\alias{loglog_trans}
+\alias{transform_quantile}
+\alias{transform_quantit}
+\alias{transform_expit}
+\alias{transform_cloglog}
 \title{More \link{scales}\link{trans}}
 \usage{
-quantile_trans(distribution, ...)
+transform_quantile(distribution, ...)
 
-quantit_trans()
+transform_quantit()
 
-expit_trans()
+transform_expit()
 
-cloglog_trans()
-
-loglog_trans()
+transform_cloglog()
 }
 \arguments{
-\item{distribution}{see function \link[scales]{probability_trans}}
+\item{distribution}{see function \link[scales]{transform_probability}}
 
 \item{...}{potential parameters, currently not in use}
 }
@@ -28,39 +25,35 @@ loglog_trans()
 ..
 }
 \details{
-Function \link{expit_trans} transforms logits to proportions
-(inverse is \link[scales]{logit_trans})
+Function \code{\link[=transform_quantile]{transform_quantile()}} is the inverse of \link[scales]{transform_probability}.
 
-Function \link{quantile_trans} is the inverse of \link[scales]{probability_trans}
+Function \code{\link[=transform_expit]{transform_expit()}} transforms logits to proportions, i.e.,
+reverts the transformation \link[scales]{transform_logit}.
 
-Function \link{quantit_trans} is the inverse of \link[scales]{probit_trans}
-(which transforms proportions to standard normal quantiles)
+Function \code{\link[=transform_quantit]{transform_quantit()}} transforms standard normal quantiles to probabilities, i.e.,
+reverts the transformation \link[scales]{transform_probit}.
 
-Function \link{cloglog_trans} transforms proportions to complementary-log-log,
-and function \link{loglog_trans} transforms proportions to log-log.
+Function \code{\link[=transform_cloglog]{transform_cloglog()}} transforms proportions to complementary-log-log,
 }
 \note{
 \link[scales]{date_trans} is only compatible with \link[base]{Date}.
 }
 \examples{
 x = seq.int(from = .1, to = .9, by = .1)
-
 library(ggplot2)
 (p = ggplot() + geom_path(mapping = aes(x = x, y = seq_along(x))))
 
-p + coord_trans(y = 'sqrt') # scales::sqrt_trans
-p + coord_trans(y = 'exp') # scales::exp_trans
-p + coord_trans(y = 'log') # scales::log_trans
+p + coord_trans(y = 'sqrt') # scales::transform_sqrt
+p + coord_trans(y = 'exp') # scales::transform_exp; why warning?
+p + coord_trans(y = 'log') # scales::transform_log
 
-p + coord_trans(x = 'logit') # scales::logit_trans
-p + coord_trans(x = 'probit') # scales::probit_trans
+p + coord_trans(x = 'logit') # scales::transform_logit
+p + coord_trans(x = 'logit') + coord_trans(x = 'expit') # nice!
 
-\dontrun{
-p + coord_trans(y = 'quantit') # what does this mean?
-p + coord_trans(y = 'cloglog')
-p + coord_trans(y = 'probit') + coord_trans(y = 'quantit')
-# why not completely straight?
-# probably not the correct way to use coord_trans()
-}
+p + coord_trans(x = 'probit') # scales::transform_probit
+p + coord_trans(x = 'probit') + coord_trans(x = 'quantit') # not completely straight?
+
+p + coord_trans(x = 'cloglog')
 
 }
+\keyword{internal}

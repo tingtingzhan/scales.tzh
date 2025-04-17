@@ -5,55 +5,61 @@
 #' 
 #' @description ..
 #' 
-#' @param distribution see function \link[scales]{probability_trans}
+#' @param distribution see function \link[scales]{transform_probability}
 #' 
 # @param base see \link[scales]{log_trans} and \link[scales]{exp_trans}
 #' 
 #' @param ... potential parameters, currently not in use
 #' 
 #' @details 
-#' Function [expit_trans] transforms logits to proportions
-#' (inverse is \link[scales]{logit_trans})
+#' Function [transform_quantile()] is the inverse of \link[scales]{transform_probability}.
 #' 
-#' Function [quantile_trans] is the inverse of \link[scales]{probability_trans}
+#' Function [transform_expit()] transforms logits to proportions, i.e., 
+#' reverts the transformation \link[scales]{transform_logit}.
 #' 
-#' Function [quantit_trans] is the inverse of \link[scales]{probit_trans}
-#' (which transforms proportions to standard normal quantiles)
+#' Function [transform_quantit()] transforms standard normal quantiles to probabilities, i.e.,
+#' reverts the transformation \link[scales]{transform_probit}.
 #' 
-#' Function [cloglog_trans] transforms proportions to complementary-log-log,
-#' and function [loglog_trans] transforms proportions to log-log.
+#' Function [transform_cloglog()] transforms proportions to complementary-log-log,
+#' 
+# Function [transform_loglog()] transforms proportions to log-log.
 #' 
 #' @note
 #' \link[scales]{date_trans} is only compatible with \link[base]{Date}.
 #' 
 #' @examples 
 #' x = seq.int(from = .1, to = .9, by = .1)
-#' 
 #' library(ggplot2)
 #' (p = ggplot() + geom_path(mapping = aes(x = x, y = seq_along(x))))
 #' 
-#' p + coord_trans(y = 'sqrt') # scales::sqrt_trans
-#' p + coord_trans(y = 'exp') # scales::exp_trans
-#' p + coord_trans(y = 'log') # scales::log_trans
+#' p + coord_trans(y = 'sqrt') # scales::transform_sqrt
+#' p + coord_trans(y = 'exp') # scales::transform_exp; why warning?
+#' p + coord_trans(y = 'log') # scales::transform_log
 #' 
-#' p + coord_trans(x = 'logit') # scales::logit_trans
-#' p + coord_trans(x = 'probit') # scales::probit_trans
+#' p + coord_trans(x = 'logit') # scales::transform_logit
+#' p + coord_trans(x = 'logit') + coord_trans(x = 'expit') # nice!
 #' 
-#' \dontrun{
-#' p + coord_trans(y = 'quantit') # what does this mean?
-#' p + coord_trans(y = 'cloglog')
-#' p + coord_trans(y = 'probit') + coord_trans(y = 'quantit')
-#' # why not completely straight?
-#' # probably not the correct way to use coord_trans()
-#' }
+#' p + coord_trans(x = 'probit') # scales::transform_probit
+#' p + coord_trans(x = 'probit') + coord_trans(x = 'quantit') # not completely straight?
 #' 
-#' @importFrom scales trans_new
+#' p + coord_trans(x = 'cloglog')
+#' 
+#' @keywords internal
 #' @name trans_
+#' @importFrom scales new_transform
 NULL
 
 if (FALSE) {
   identical(scales::trans_new, scales::new_transform) |> stopifnot()
-  # but [new_transform()] is used in [transform_probability()] and [probability_trans()]
+  # but [new_transform()] is used in function definitions in \pkg{scales}
+  
+  identical(scales::as.trans, scales::as.transform) |> stopifnot()
+  
+  identical(scales::log_trans, scales::transform_log) |> stopifnot()
+  # ?scales::as.transform (e.g., inside ?ggplot2::coord_trans)
+  # does `paste0('transform_', x)`  
+  identical(scales::exp_trans, scales::transform_exp) |> stopifnot()
+  
   identical(scales::transform_probability, scales::probability_trans) |> stopifnot()
   identical(scales::transform_logit, scales::logit_trans) |> stopifnot()
 }
@@ -63,82 +69,80 @@ if (FALSE) {
 
 #' @rdname trans_
 #' @export
-quantile_trans <- function(distribution, ...) { # from \link[scales]{probability_trans}
+transform_quantile <- function(distribution, ...) { # from ?scales::transform_probability
   qfun <- match.fun(paste0('q', distribution))
   pfun <- match.fun(paste0('p', distribution))
-  trans_new(name = paste0('quantile-', distribution), 
-            transform = function(x) pfun(x, ...),
-            inverse = function(x) {
-              # inspired by `make.link('cloglog')$linkinv`. important!
-              x <- pmax.int(pmin.int(x, 1 - .Machine$double.eps), .Machine$double.eps)
-              qfun(x, ...)
-            })
+  dfun <- match.fun(paste0('d', distribution))
+  new_transform(
+    name = paste0('quantile-', distribution), 
+    transform = function(x) pfun(x, ...),
+    inverse = function(x) {
+      # inspired by `stats::make.link('cloglog')$linkinv`. important!
+      x <- pmax.int(pmin.int(x, 1 - .Machine$double.eps), .Machine$double.eps)
+      qfun(x, ...)
+    }, 
+    d_transform = function(x) dfun(x, ...), # `d_inverse` of ?scales::transform_probability
+    d_inverse = function(x) 1/dfun(qfun(x, ...), ...), # `d_transform` of ?scales::transform_probability
+    domain = c(-Inf, Inf)
+  )
 }
 
+#' @rdname trans_
+#' @export
+transform_quantit <- function() transform_quantile(distribution = 'norm')
 
 
 #' @rdname trans_
 #' @export
-quantit_trans <- function() quantile_trans('norm')
-#' @rdname trans_
-#' @export
-expit_trans <- function() quantile_trans('logis')
+transform_expit <- function() transform_quantile(distribution = 'logis')
 
 
-#' @rdname trans_
+
+
 #' @importFrom stats make.link
-#' @export
-cloglog_trans <- function() {
-  out <- make.link(link = 'cloglog')
-  trans_new(name = 'cloglog', transform = out$linkfun, inverse = out$linkinv)
+link2transform <- function(link, domain) {
+  
+  if (is.character(link)) {
+    if (length(link) != 1L || is.na(link) || !nzchar(link)) stop('illegal `link`') 
+    link <- link |> make.link()
+  }
+  
+  if (!inherits(link, what = 'link-glm')) stop('`link` must be convertible to a `link-glm` object')
+  
+  new_transform(
+    name = link$name, 
+    transform = link$linkfun, 
+    inverse = link$linkinv,
+    d_transform = function(x) {
+      # see ?scales::transform_probability carefully!
+      # also, https://en.wikipedia.org/wiki/Inverse_function_rule
+      1 / link$mu.eta(link$linkfun(x))
+    },
+    d_inverse = link$mu.eta,
+    domain = domain # currently need human input of domain
+  )
+  
 }
+
 
 #' @rdname trans_
 #' @export
-loglog_trans <- function() {
-  out <- make_link2(link = 'loglog')
-  trans_new(name = 'loglog', transform = out$linkfun, inverse = out$linkinv)
+transform_cloglog <- function() {
+  link2transform(link = 'cloglog', domain = c(0, 1))
 }
 
 
 
 
-#' @title Create More Links
-#' 
-#' @description ..
-#' 
-#' @param link \link[base]{character} scalar.  Currently `'loglog'` is supported 
-#' 
-#' @details 
-#' ..
-#' 
-#' @returns 
-#' Function [make_link2] returns a `'link-glm'` object, just like \link[stats]{make.link}
-#' 
-#' @seealso 
-#' \link[stats]{make.link}
-#' 
-#' @export
-make_link2 <- function(link) {
-  switch(link, loglog = {
-    # remotes::install_github('trobinj/trtools')
-    # ?trtools::loglog: not sure if this is correct
-    # ?VGAM::logloglink: looks not right?
-    # http://people.stat.sfu.ca/~raltman/stat402/402L13.pdf # following based on
-    linkfun <- function(mu) log(-log(mu))
-    linkinv <- function(eta) pmax.int(pmin.int(exp(-exp(eta)), 1 - .Machine$double.eps), .Machine$double.eps)
-    mu.eta <- function(eta) {
-      # simply be the negation of `make.link('cloglog')$mu.eta`
-      eta <- pmin.int(eta, 700)
-      pmin.int(- exp(eta - exp(eta)), -.Machine$double.eps)
-    }
-    valideta <- function(eta) TRUE
-  }, stop('illegal link: ', sQuote(link)))
-  environment(linkfun) <- environment(linkinv) <- environment(mu.eta) <- environment(valideta) <- asNamespace('tzh')
-  out <- list(linkfun = linkfun, linkinv = linkinv, mu.eta = mu.eta, valideta = valideta, name = link)
-  class(out) <- 'link-glm'
-  return(out)
-}
+# remotes::install_github('trobinj/trtools') # *not* on CRAN
+# @rdname trans_
+# @importFrom trtools loglog
+# @export
+#transform_loglog <- function() {
+#  link2transform(link = trtools::loglog, domain = c(0, 1))
+#}
+
+
 
 
 
