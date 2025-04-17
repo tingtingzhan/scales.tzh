@@ -1,7 +1,8 @@
 
-#' @title Additional Labelling `label_*` Functions
+#' @title Additional Labeling Functions
 #' 
-#' @description ..
+#' @description 
+#' Additional labeling `label_*()` functions.
 #' 
 #' @param scale,suffix,... see function \link[scales]{label_number}
 #' 
@@ -13,8 +14,8 @@
 #' to specify the coding of `NA_real_`.
 #' 
 #' @examples
-#' 3.6e-3 |> label_permille(accuracy = .1)()
-#' c(3.6e-3, NA_real_) |> label_permille(accuracy = .1)()
+#' 3.62e-3 |> label_permille(accuracy = .01)()
+#' c(3.62e-3, NA_real_) |> label_permille(accuracy = .1)()
 #' @name label_
 #' @aliases label_permille
 #' @keywords internal
@@ -27,7 +28,7 @@ label_permille <- function(scale = 1e3, suffix = '\u2030', ...) {
 
 #' @rdname label_
 #' @examples
-#' label_per10thousand(accuracy = .1)(4.2e-4)
+#' 4.2e-4 |> label_per10thousand(accuracy = .1)()
 #' @aliases label_per10thousand
 #' @importFrom scales label_number
 #' @export
