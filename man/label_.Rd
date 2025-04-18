@@ -6,12 +6,13 @@
 \alias{label_per10thousand}
 \title{Additional Labeling Functions}
 \usage{
-label_permille(scale = 1000, suffix = "‰", ...)
+label_permille(...)
 
-label_per10thousand(scale = 10000, suffix = "‱", ...)
+label_per10thousand(...)
 }
 \arguments{
-\item{scale, suffix, ...}{see function \link[scales]{label_number}}
+\item{...}{parameters of function \link[scales]{label_number},
+other than \code{scale} and \code{suffix}}
 }
 \description{
 Additional labeling \verb{label_*()} functions.

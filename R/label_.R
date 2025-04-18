@@ -4,7 +4,8 @@
 #' @description 
 #' Additional labeling `label_*()` functions.
 #' 
-#' @param scale,suffix,... see function \link[scales]{label_number}
+#' @param ... parameters of function \link[scales]{label_number},
+#' other than `scale` and `suffix`
 #' 
 #' @details
 #' To mimic the behavior of function \link[scales]{label_percent}.
@@ -21,8 +22,8 @@
 #' @keywords internal
 #' @importFrom scales label_number
 #' @export
-label_permille <- function(scale = 1e3, suffix = '\u2030', ...) {
-  label_number(scale = scale, suffix = suffix, ...)
+label_permille <- function(...) {
+  label_number(scale = 1e3, suffix = '\u2030', ...)
 }
   
 
@@ -32,8 +33,8 @@ label_permille <- function(scale = 1e3, suffix = '\u2030', ...) {
 #' @aliases label_per10thousand
 #' @importFrom scales label_number
 #' @export
-label_per10thousand <- function(scale = 1e4, suffix = '\u2031', ...) {
-  label_number(scale = scale, suffix = suffix, ...)
+label_per10thousand <- function(...) {
+  label_number(scale = 1e4, suffix = '\u2031', ...)
 }
 
 
