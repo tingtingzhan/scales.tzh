@@ -109,36 +109,3 @@ label_pvalue_sym <- function(...) {
 }
 
 
-
-
-
-label_pvalue_sym_OLD <- function(x, add_p = FALSE, ...) {
-  
-  ret <- x
-  storage.mode(ret) <- 'character'
-  
-  if (!length(x)) return(ret)
-  
-  ret[] <- x |> 
-    label_pvalue(add_p = add_p, ...)() |>
-    sub(pattern = '([-]?)0[.]', replacement = '\\1.') # http://stackoverflow.com/questions/12643391
-  
-  sym <- symnum(
-    x, corr = FALSE, na = FALSE, 
-    cutpoints = c(0, .001, .01, .05, .1, 1), 
-    #symbols = c('\u2605\u2605\u2605', '\u2605\u2605', '\u2605', '\u2606', '') # star
-    symbols = c('\u2b51\u2b51\u2b51', '\u2b51\u2b51', '\u2b51', '\u2b52', '') # small star
-  ) # see ?stats::printCoefmat
-  ret[] <- ret |> paste(sym) |> trimws()
-  
-  ret[is.na(x)] <- '' # *not* NA_character_
-  
-  return(ret)
-  
-}
-
-
-
-
-
-
