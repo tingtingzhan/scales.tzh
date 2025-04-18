@@ -41,3 +41,4 @@ p2 |> label_pvalue_sym()() # attr-name kept
 double() |> scales::label_pvalue()() # do not like!
 double() |> label_pvalue_sym()()
 }
+\keyword{internal}

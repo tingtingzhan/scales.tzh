@@ -76,6 +76,7 @@ label_per10thousand <- function(scale = 1e4, suffix = '\u2031', ...) {
 #' # below: exception handling
 #' double() |> scales::label_pvalue()() # do not like!
 #' double() |> label_pvalue_sym()()
+#' @keywords internal
 #' @importFrom scales label_pvalue
 #' @importFrom stats symnum
 #' @export
