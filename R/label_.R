@@ -97,8 +97,10 @@ label_pvalue_sym <- function(...) {
     sym <- symnum(
       x, corr = FALSE, na = FALSE, 
       cutpoints = c(0, .001, .01, .05, .1, 1), 
-      #symbols = c('\u2605\u2605\u2605', '\u2605\u2605', '\u2605', '\u2606', '') # star
-      symbols = c('\u2b51\u2b51\u2b51', '\u2b51\u2b51', '\u2b51', '\u2b52', '') # small star
+      symbols = if (getOption('use_unicode')) {
+        #c('\u2605\u2605\u2605', '\u2605\u2605', '\u2605', '\u2606', '') # star
+        c('\u2b51\u2b51\u2b51', '\u2b51\u2b51', '\u2b51', '\u2b52', '') # small star
+      } else c("***", "**", "*", ".", " ")
     ) # see ?stats::printCoefmat
     ret[] <- ret |> paste(sym) |> trimws()
     
