@@ -75,7 +75,10 @@ label_per10thousand <- function(...) {
 #' p2 |> label_pvalue_sym()() # attr-name kept
 #' 
 #' # below: exception handling
-#' double() |> scales::label_pvalue()() # do not like!
+#' double() |> scales::label_pvalue()() 
+#' # do not like!
+#' # ?scales::pvalue is bad; ?scales::number is fine!
+#' 
 #' double() |> label_pvalue_sym()()
 #' @keywords internal
 #' @importFrom scales label_pvalue
