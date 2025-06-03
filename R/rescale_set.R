@@ -1,6 +1,6 @@
 
 
-#' @title rescale syntactic sugar
+#' @title \link[scales]{rescale} syntactic sugar
 #' 
 #' @description ..
 #' 
@@ -13,6 +13,7 @@
 #' @examples 
 #' rescale(swiss) = c(100, 0)
 #' head(swiss)
+#' @keywords internal
 #' @name rescale_set
 #' @importFrom scales rescale
 #' @export

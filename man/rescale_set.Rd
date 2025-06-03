@@ -6,7 +6,7 @@
 \alias{rescale<-.default}
 \alias{rescale<-.list}
 \alias{rescale<-.data.frame}
-\title{rescale syntactic sugar}
+\title{\link[scales]{rescale} syntactic sugar}
 \usage{
 rescale(x, ...) <- value
 
@@ -30,3 +30,4 @@ rescale(x, ...) <- value
 rescale(swiss) = c(100, 0)
 head(swiss)
 }
+\keyword{internal}
